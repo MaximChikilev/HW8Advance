@@ -1,31 +1,34 @@
-import java.util.Arrays;
 
-public class MyStack {
-    private Object[] stack;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
+public class MyStack<T> implements Iterable<T> {
+    private T[] stack;
     private int topOfStack = 0;
 
-    public MyStack(int capacity) {
-        this.stack = new Object[capacity];
+    public MyStack(T[] stack) {
+        this.stack = stack;
     }
 
-    public void push(Object obj) {
+    public void push(T obj) {
         if (topOfStack >= stack.length) increaseCapacity();
         stack[topOfStack] = obj;
         topOfStack++;
     }
 
-    public Object pop() {
-        Object element = null;
+    public T pop() {
+        T element = null;
         if (topOfStack != 0) {
             topOfStack--;
-            element = stack[topOfStack];
+            element = (T) stack[topOfStack];
             stack[topOfStack] = null;
         }
         return element;
     }
 
-    public Object peek() {
-        Object element = null;
+    public T peek() {
+        T element = null;
         if (topOfStack != 0) {
             element = stack[topOfStack - 1];
         }
@@ -33,7 +36,7 @@ public class MyStack {
     }
 
     public void increaseCapacity() {
-        Object[] oldStack = stack;
+        T[] oldStack = stack;
         int newCapacity = stack.length * 3 / 2 + 1;
         stack = Arrays.copyOf(oldStack, newCapacity);
     }
@@ -46,5 +49,27 @@ public class MyStack {
         }
         return "MyStack{" + stackStr + '}';
     }
+
+    @Override
+    public Iterator<T> iterator() {
+        return new Iterator<T>() {
+            private int currentElement = topOfStack-1;
+
+            @Override
+            public boolean hasNext() {
+                return (currentElement > 0) && (topOfStack != 0);
+            }
+
+            @Override
+            public T next() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
+                }
+                return stack[currentElement--];
+            }
+        };
+    }
+
+
 }
 
